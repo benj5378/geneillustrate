@@ -17,6 +17,13 @@ ui_file.close()
 
 window.show()
 
+def zoomIn():
+    window.strandGraphics.scale(1.2, 1.2)
+
+def zoomOut():
+    window.strandGraphics.scale(1 / 1.2, 1 / 1.2)
+
+
 def updateView():
     nucleotideWidth = int(window.nucleotideWidthInput.text())
     baseWidth = int(window.baseWidthInput.text())
@@ -47,7 +54,8 @@ textEdit.setFontFamily("DejaVu Sans Mono")
 
 textEdit.textChanged.connect(updateView)
 window.baseWidthInput.textChanged.connect(updateView)
-window.nucleotideWidthInput.textChanged.connect(updateView)
+window.zoomInButton.pressed.connect(zoomIn)
+window.zoomOutButton.pressed.connect(zoomOut)
 
 
 def updateGeneMap():
