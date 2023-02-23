@@ -18,14 +18,17 @@ ui_file.close()
 window.show()
 
 def updateView():
+    nucleotideWidth = int(window.nucleotideWidthInput.text())
+    baseWidth = int(window.baseWidthInput.text())
+
     scene.clear()
     text = window.strandEdit.toPlainText()
     strands = text.splitlines()
 
     if len(strands) == 1:
-        drawStrand(0, 0, scene, strands[0])
+        drawStrand(0, 0, scene, strands[0], False, nucleotideWidth, baseWidth)
     elif len(strands) == 2:
-        drawSequence(0, 0, scene, strands[0], strands[1])
+        drawSequence(0, 0, scene, strands[0], strands[1], nucleotideWidth, baseWidth)
     elif len(strands) == 0:
         return
     else:
@@ -41,8 +44,10 @@ drawSequence(0, 0, scene, "ATGTTACT", "TACAATGA")
 textEdit = window.strandEdit
 textEdit.setFontFamily("DejaVu Sans Mono")
 
-QObject.connect(textEdit, SIGNAL('textChanged()'), updateView)
 
+textEdit.textChanged.connect(updateView)
+window.baseWidthInput.textChanged.connect(updateView)
+window.nucleotideWidthInput.textChanged.connect(updateView)
 
 
 def updateGeneMap():
