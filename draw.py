@@ -1,11 +1,12 @@
-from PySide6.QtWidgets import QApplication, QWidget, QGraphicsScene
-from PySide6.QtCore import QFile, QIODevice, QLine, Qt, QPointF
-from PySide6.QtGui import QPainter, QPolygonF, QPen, QBrush, QColor, QFont
+from PySide6.QtWidgets import QGraphicsScene
+from PySide6.QtCore import Qt, QPointF
+from PySide6.QtGui import QPolygonF, QPen, QBrush, QColor, QFont
 
 width1 = 120
 width2 = 60
 
 def drawBase(x : int, y : int, scene : QGraphicsScene, letter : str, flipped=False) -> None:
+    letter = letter.upper()
     if letter == "A": color = QColor.fromRgb(0, 0, 255)
     elif letter == "C": color = QColor.fromRgb(255, 0, 0)
     elif letter == "G": color = QColor.fromRgb(0, 255, 0)

@@ -1,11 +1,11 @@
 import sys
 
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtWidgets import QApplication, QWidget, QGraphicsScene, QTextEdit
-from PySide6.QtCore import QFile, QIODevice, QLine, Qt, QPointF, QObject, SIGNAL
-from PySide6.QtGui import QPainter, QPolygonF, QPen, QBrush, QColor, QFont
+from PySide6.QtWidgets import QApplication, QGraphicsScene
+from PySide6.QtCore import QFile, QIODevice, QObject, SIGNAL
 
 from draw import *
+from sequence_mapping import *
 
 
 app = QApplication(sys.argv)
@@ -19,7 +19,7 @@ window.show()
 
 def updateView():
     scene.clear()
-    text = window.textEdit.toPlainText()
+    text = window.strandEdit.toPlainText()
     strands = text.splitlines()
 
     if len(strands) == 1:
@@ -34,14 +34,48 @@ def updateView():
 
 
 scene = QGraphicsScene()
-window.graphicsView.setScene(scene)
+window.strandGraphics.setScene(scene)
 
 drawSequence(0, 0, scene, "ATGTTACT", "TACAATGA")
 
-textEdit = window.textEdit
+textEdit = window.strandEdit
 textEdit.setFontFamily("DejaVu Sans Mono")
 
 QObject.connect(textEdit, SIGNAL('textChanged()'), updateView)
+
+
+
+def updateGeneMap():
+    genes = list()
+
+    text = window.geneMapEdit.toPlainText()
+    genesStr = text.splitlines()
+    for geneStr in genesStr:
+        geneData = geneStr.split(", ")
+        geneName = geneData[0]
+        geneWidth = int(geneData[1])
+        geneColor = (int(geneData[2]), int(geneData[3]), int(geneData[4]))
+
+        genes.append((
+            geneName,
+            geneWidth,
+            geneColor
+        ))
+
+    scene2.clear()
+    drawLinearMap(scene2, genes)
+
+
+
+scene2 = QGraphicsScene()
+window.geneMapGraphics.setScene(scene2)
+
+geneMapEdit = window.geneMapEdit
+geneMapEdit.setFontFamily("DejaVu Sans Mono")
+
+QObject.connect(geneMapEdit, SIGNAL('textChanged()'), updateGeneMap)
+
+
 
 
 app.exec()
