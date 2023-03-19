@@ -4,9 +4,8 @@ import json
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtWidgets import QApplication, QGraphicsScene
 from PySide6.QtCore import QFile, QIODevice, QObject, SIGNAL
-from PySide6.QtGui import QImage, QPainter
 
-from draw import drawSequence, loadColorConfig
+from StrandGraphicsScene import StrandGraphicsScene
 from sequence_mapping import *
 
 
@@ -30,26 +29,28 @@ def updateView():
     nucleotideWidth = int(window.nucleotideWidthInput.text())
     baseWidth = int(window.baseWidthInput.text())
 
-    scene.clear()
+    _StrandGraphicsScene.clear()
     text = window.strandEdit.toPlainText()
     strands = text.splitlines()
 
     if len(strands) == 1:
-        drawStrand(0, 0, scene, strands[0], False, nucleotideWidth, baseWidth)
+        _StrandGraphicsScene.drawStrand(
+            0, 0, strands[0], False, nucleotideWidth, baseWidth
+        )
     elif len(strands) == 2:
-        drawSequence(0, 0, scene, strands[0], strands[1], nucleotideWidth, baseWidth)
+        _StrandGraphicsScene.drawSequence(
+            0, 0, strands[0], strands[1], nucleotideWidth, baseWidth
+        )
     elif len(strands) == 0:
         return
     else:
         raise ValueError(f"Too many strands, {len(strands)} given, wanted 1 or 2")
 
 
+_StrandGraphicsScene = StrandGraphicsScene()
+window.strandGraphics.setScene(_StrandGraphicsScene)
 
-scene = QGraphicsScene()
-window.strandGraphics.setScene(scene)
-
-loadColorConfig()
-drawSequence(0, 0, scene, "ATGTTACT", "TACAATGA")
+_StrandGraphicsScene.drawSequence(0, 0, "ATGTTACT", "TACAATGA")
 
 textEdit = window.strandEdit
 textEdit.setFontFamily("DejaVu Sans Mono")
