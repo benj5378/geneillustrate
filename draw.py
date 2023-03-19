@@ -1,14 +1,31 @@
+import json
+
 from PySide6.QtWidgets import QGraphicsScene
 from PySide6.QtCore import Qt, QPointF
 from PySide6.QtGui import QPolygonF, QPen, QBrush, QColor, QFont
 
 
+config: dict
+def loadColorConfig():
+    global config
+    with open("./config.json") as file:
+        config = json.load(file)
+
 def drawBase(x : int, y : int, scene : QGraphicsScene, letter : str, flipped=False, nucleotideWidth=120, basewidth=60) -> None:
+    global config
     letter = letter.upper()
-    if letter == "A": color = QColor.fromRgb(0, 0, 255)
-    elif letter == "C": color = QColor.fromRgb(255, 0, 0)
-    elif letter == "G": color = QColor.fromRgb(0, 255, 0)
-    elif letter == "T": color = QColor.fromRgb(255, 196, 0)
+    if letter == "A":
+        confcolor = config["colors"]["adenine"]
+        color = QColor.fromRgb(confcolor[0], confcolor[1], confcolor[2])
+    elif letter == "C":
+        confcolor = config["colors"]["cytosine"]
+        color = QColor.fromRgb(confcolor[0], confcolor[1], confcolor[2])
+    elif letter == "G":
+        confcolor = config["colors"]["guanine"]
+        color = QColor.fromRgb(confcolor[0], confcolor[1], confcolor[2])
+    elif letter == "T":
+        confcolor = config["colors"]["thymine"]
+        color = QColor.fromRgb(confcolor[0], confcolor[1], confcolor[2])
     elif letter == " ": return
     else: raise ValueError
 

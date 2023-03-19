@@ -1,0 +1,8 @@
+{
+    "colors": {
+        "adenine": [0, 0, 255],
+        "cytosine": [255, 0, 0],
+        "guanine": [0, 255, 0],
+        "thymine": [255, 196, 0]
+    }
+}

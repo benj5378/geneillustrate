@@ -1,10 +1,12 @@
 import sys
+import json
 
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtWidgets import QApplication, QGraphicsScene
 from PySide6.QtCore import QFile, QIODevice, QObject, SIGNAL
+from PySide6.QtGui import QImage, QPainter
 
-from draw import *
+from draw import drawSequence, loadColorConfig
 from sequence_mapping import *
 
 
@@ -46,6 +48,7 @@ def updateView():
 scene = QGraphicsScene()
 window.strandGraphics.setScene(scene)
 
+loadColorConfig()
 drawSequence(0, 0, scene, "ATGTTACT", "TACAATGA")
 
 textEdit = window.strandEdit
