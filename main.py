@@ -60,6 +60,7 @@ textEdit.textChanged.connect(updateView)
 window.baseWidthInput.textChanged.connect(updateView)
 window.zoomInButton.pressed.connect(zoomIn)
 window.zoomOutButton.pressed.connect(zoomOut)
+window.action_to_PNG.triggered.connect(_StrandGraphicsScene.exportToPNG)
 
 
 def updateGeneMap():

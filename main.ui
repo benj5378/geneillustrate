@@ -212,6 +212,21 @@ p, li { white-space: pre-wrap; }
      <height>24</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuExport">
+    <property name="title">
+     <string>Export</string>
+    </property>
+    <addaction name="action_to_PNG"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuExport"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="action_to_PNG">
+   <property name="text">
+    <string>...to PNG</string>
+   </property>
+  </action>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

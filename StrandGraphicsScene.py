@@ -1,7 +1,7 @@
 import json
 
 from PySide6.QtWidgets import QGraphicsScene
-from PySide6.QtCore import Qt, QPointF
+from PySide6.QtCore import Qt, QPointF, QRect
 from PySide6.QtGui import QPolygonF, QPen, QBrush, QColor, QFont
 from PySide6.QtGui import QImage, QPainter
 
@@ -96,3 +96,12 @@ class StrandGraphicsScene(QGraphicsScene):
     ):
         self.drawStrand(x, y, sequence1, False, nucleotideWidth, basewidth)
         self.drawStrand(x, y + 2 * 90, sequence2, True, nucleotideWidth, basewidth)
+
+    def exportToPNG(self):
+        # It works. It just works. No idea how.
+        area = QRect(0, 0, self.sceneRect().width(), self.sceneRect().height()) # QRect(0, 0, 500, 500)
+        img = QImage(area.size(), QImage.Format_ARGB32_Premultiplied)
+        painter = QPainter(img)
+        self.render(painter, img.rect(), area)
+        painter.end()
+        img.save("./export.png")
