@@ -1,99 +1,118 @@
 import sys
-import json
 
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtWidgets import QApplication
-from PySide6.QtCore import QFile, QIODevice, QObject, SIGNAL
+from PySide6.QtWidgets import QApplication, QMainWindow
+from PySide6.QtCore import QFile, QIODevice
+from PySide6.QtGui import QCloseEvent
+from PySide6.QtCore import Qt, QEvent
 
 from StrandGraphicsScene import StrandGraphicsScene
 from SequenceMappingGraphicsScene import SequenceMappingGraphicsScene
 
 
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.loadUI()
+        self.setupUI()
+        self.makeBindings()
+        self.startSetting()
+
+    def loadUI(self):
+        ui_file = QFile("main.ui")
+        ui_file.open(QIODevice.ReadOnly)
+        self.ui = QUiLoader().load(ui_file, self)
+        ui_file.close()
+
+        # In connection with eventFilter
+        self.ui.setParent(self, self.ui.windowFlags() | Qt.WindowType.Window)
+        self.ui.installEventFilter(self)
+
+    def setupUI(self):
+        self.ui.strandEdit.setFontFamily("DejaVu Sans Mono")
+        self.ui.strandGraphicsScene = StrandGraphicsScene()
+        self.ui.strandGraphics.setScene(self.ui.strandGraphicsScene)
+
+        self.ui.geneMapEdit.setFontFamily("DejaVu Sans Mono")
+        self.ui.sequenceMappingGraphicsScene = SequenceMappingGraphicsScene()
+        self.ui.geneMapGraphics.setScene(self.ui.sequenceMappingGraphicsScene)
+
+    def makeBindings(self):
+        # Strand tab bindings
+        self.ui.baseWidthInput.textChanged.connect(self.updateStrandGraphics)
+        self.ui.nucleotideWidthInput.textChanged.connect(self.updateStrandGraphics)
+        self.ui.strandEdit.textChanged.connect(self.updateStrandGraphics)
+        self.ui.zoomInButton.pressed.connect(self.strandGraphicsZoomIn)
+        self.ui.zoomOutButton.pressed.connect(self.strandGraphicsZoomOut)
+
+        # Gene map tab bindings
+        self.ui.geneMapEdit.textChanged.connect(self.updateSequenceMappingGraphics)
+
+        # Menu bindings
+        self.ui.action_to_PNG.triggered.connect(self.ui.strandGraphicsScene.exportToPNG)
+
+    def show(self):
+        self.ui.show()
+
+    # Helps closing quitting the application when the window is exitted
+    # I don't know how it works, it just works
+    def eventFilter(self, source, event):
+        if event.type() == QEvent.Type.Close and source is self.ui:
+            QApplication.instance().quit()
+        return super().eventFilter(source, event)
+
+    def startSetting(self):
+        self.ui.strandGraphicsScene.drawSequence(0, 0, "ATGTTACT", "TACAATGA")
+
+    def strandGraphicsZoomOut(self):
+        self.ui.strandGraphics.scale(1 / 1.2, 1 / 1.2)
+
+    def strandGraphicsZoomIn(self):
+        self.ui.strandGraphics.scale(1.2, 1.2)
+
+    def updateStrandGraphics(self):
+        nucleotideWidth = int(self.ui.nucleotideWidthInput.text())
+        baseWidth = int(self.ui.baseWidthInput.text())
+
+        self.ui.strandGraphicsScene.clear()
+        text = self.ui.strandEdit.toPlainText()
+        strands = text.splitlines()
+
+        if len(strands) == 1:
+            self.ui.strandGraphicsScene.drawStrand(
+                0, 0, strands[0], False, nucleotideWidth, baseWidth
+            )
+        elif len(strands) == 2:
+            self.ui.strandGraphicsScene.drawSequence(
+                0, 0, strands[0], strands[1], nucleotideWidth, baseWidth
+            )
+        elif len(strands) == 0:
+            return
+        else:
+            raise ValueError(f"Too many strands, {len(strands)} given, wanted 1 or 2")
+
+    def updateSequenceMappingGraphics(self):
+        genes = list()
+
+        text = self.ui.geneMapEdit.toPlainText()
+        genesStr = text.splitlines()
+        for geneStr in genesStr:
+            geneData = geneStr.split(", ")
+            geneName = geneData[0]
+            geneWidth = int(geneData[1])
+            geneColor = (int(geneData[2]), int(geneData[3]), int(geneData[4]))
+
+            genes.append((geneName, geneWidth, geneColor))
+
+        self.ui.sequenceMappingGraphicsScene.clear()
+        self.ui.sequenceMappingGraphicsScene.drawLinearMap(genes)
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        print("was here")
+        return super().closeEvent(event)
+
+
 app = QApplication(sys.argv)
-
-ui_file = QFile("main.ui")
-ui_file.open(QIODevice.ReadOnly)
-window = QUiLoader().load(ui_file)
-ui_file.close()
-
+window = MainWindow()
 window.show()
-
-def zoomIn():
-    window.strandGraphics.scale(1.2, 1.2)
-
-def zoomOut():
-    window.strandGraphics.scale(1 / 1.2, 1 / 1.2)
-
-
-def updateView():
-    nucleotideWidth = int(window.nucleotideWidthInput.text())
-    baseWidth = int(window.baseWidthInput.text())
-
-    _StrandGraphicsScene.clear()
-    text = window.strandEdit.toPlainText()
-    strands = text.splitlines()
-
-    if len(strands) == 1:
-        _StrandGraphicsScene.drawStrand(
-            0, 0, strands[0], False, nucleotideWidth, baseWidth
-        )
-    elif len(strands) == 2:
-        _StrandGraphicsScene.drawSequence(
-            0, 0, strands[0], strands[1], nucleotideWidth, baseWidth
-        )
-    elif len(strands) == 0:
-        return
-    else:
-        raise ValueError(f"Too many strands, {len(strands)} given, wanted 1 or 2")
-
-
-_StrandGraphicsScene = StrandGraphicsScene()
-window.strandGraphics.setScene(_StrandGraphicsScene)
-
-_StrandGraphicsScene.drawSequence(0, 0, "ATGTTACT", "TACAATGA")
-
-textEdit = window.strandEdit
-textEdit.setFontFamily("DejaVu Sans Mono")
-
-
-textEdit.textChanged.connect(updateView)
-window.baseWidthInput.textChanged.connect(updateView)
-window.zoomInButton.pressed.connect(zoomIn)
-window.zoomOutButton.pressed.connect(zoomOut)
-window.action_to_PNG.triggered.connect(_StrandGraphicsScene.exportToPNG)
-
-
-def updateGeneMap():
-    genes = list()
-
-    text = window.geneMapEdit.toPlainText()
-    genesStr = text.splitlines()
-    for geneStr in genesStr:
-        geneData = geneStr.split(", ")
-        geneName = geneData[0]
-        geneWidth = int(geneData[1])
-        geneColor = (int(geneData[2]), int(geneData[3]), int(geneData[4]))
-
-        genes.append((
-            geneName,
-            geneWidth,
-            geneColor
-        ))
-
-    _SequenceMappingGraphicsScene.clear()
-    _SequenceMappingGraphicsScene.drawLinearMap(genes)
-
-
-_SequenceMappingGraphicsScene = SequenceMappingGraphicsScene()
-window.geneMapGraphics.setScene(_SequenceMappingGraphicsScene)
-
-geneMapEdit = window.geneMapEdit
-geneMapEdit.setFontFamily("DejaVu Sans Mono")
-
-QObject.connect(geneMapEdit, SIGNAL('textChanged()'), updateGeneMap)
-
-
-
-
 app.exec()
-
