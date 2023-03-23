@@ -2,11 +2,11 @@ import sys
 import json
 
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtWidgets import QApplication, QGraphicsScene
+from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import QFile, QIODevice, QObject, SIGNAL
 
 from StrandGraphicsScene import StrandGraphicsScene
-from sequence_mapping import *
+from SequenceMappingGraphicsScene import SequenceMappingGraphicsScene
 
 
 app = QApplication(sys.argv)
@@ -80,13 +80,12 @@ def updateGeneMap():
             geneColor
         ))
 
-    scene2.clear()
-    drawLinearMap(scene2, genes)
+    _SequenceMappingGraphicsScene.clear()
+    _SequenceMappingGraphicsScene.drawLinearMap(genes)
 
 
-
-scene2 = QGraphicsScene()
-window.geneMapGraphics.setScene(scene2)
+_SequenceMappingGraphicsScene = SequenceMappingGraphicsScene()
+window.geneMapGraphics.setScene(_SequenceMappingGraphicsScene)
 
 geneMapEdit = window.geneMapEdit
 geneMapEdit.setFontFamily("DejaVu Sans Mono")
