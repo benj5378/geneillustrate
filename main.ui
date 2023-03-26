@@ -212,6 +212,12 @@ p, li { white-space: pre-wrap; }
      <height>24</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <addaction name="actionChange_colors"/>
+   </widget>
    <widget class="QMenu" name="menuExport">
     <property name="title">
      <string>Export</string>
@@ -227,8 +233,11 @@ p, li { white-space: pre-wrap; }
     <string>...to PNG</string>
    </property>
   </action>
-  </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionChange_colors">
+   <property name="text">
+    <string>Change colors...</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

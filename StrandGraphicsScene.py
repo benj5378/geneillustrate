@@ -6,13 +6,23 @@ from PySide6.QtGui import QPolygonF, QPen, QBrush, QColor, QFont
 from PySide6.QtGui import QImage, QPainter
 
 
+# Todo, make all color variables QColor
 class StrandGraphicsScene(QGraphicsScene):
     # Uses draw functions inherited from QGraphicsScene
 
     def __init__(self):
         super().__init__()
         with open("./config.json") as file:
-            self.config = json.load(file)
+            self.updateConfig(json.load(file))
+
+    def updateConfig(self, config=dict):
+        self.colorConfig = config["colors"]
+
+    def updateColor(self, base: str, color: list[int, int, int]):
+        self.colorConfig[base] = color
+
+    def getColor(self, base: str) -> list[int, int, int]:
+        return self.colorConfig[base]
 
     def drawBase(
         self,
@@ -25,21 +35,21 @@ class StrandGraphicsScene(QGraphicsScene):
     ) -> None:
         letter = letter.upper()
         if letter == "A":
-            confcolor = self.config["colors"]["adenine"]
+            confcolor = self.colorConfig["adenine"]
             color = QColor.fromRgb(confcolor[0], confcolor[1], confcolor[2])
         elif letter == "C":
-            confcolor = self.config["colors"]["cytosine"]
+            confcolor = self.colorConfig["cytosine"]
             color = QColor.fromRgb(confcolor[0], confcolor[1], confcolor[2])
         elif letter == "G":
-            confcolor = self.config["colors"]["guanine"]
+            confcolor = self.colorConfig["guanine"]
             color = QColor.fromRgb(confcolor[0], confcolor[1], confcolor[2])
         elif letter == "T":
-            confcolor = self.config["colors"]["thymine"]
+            confcolor = self.colorConfig["thymine"]
             color = QColor.fromRgb(confcolor[0], confcolor[1], confcolor[2])
         elif letter == " ":
             return
         else:
-            raise ValueError
+            raise ValueError("Base does not exist!")
 
         if flipped:
             f = -1
@@ -99,7 +109,9 @@ class StrandGraphicsScene(QGraphicsScene):
 
     def exportToPNG(self):
         # It works. It just works. No idea how.
-        area = QRect(0, 0, self.sceneRect().width(), self.sceneRect().height()) # QRect(0, 0, 500, 500)
+        area = QRect(
+            0, 0, self.sceneRect().width(), self.sceneRect().height()
+        )  # QRect(0, 0, 500, 500)
         img = QImage(area.size(), QImage.Format_ARGB32_Premultiplied)
         painter = QPainter(img)
         self.render(painter, img.rect(), area)

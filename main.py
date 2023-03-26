@@ -8,15 +8,18 @@ from PySide6.QtCore import Qt, QEvent
 
 from StrandGraphicsScene import StrandGraphicsScene
 from SequenceMappingGraphicsScene import SequenceMappingGraphicsScene
+from ChangeColorDialog import ChangeColorDialog
 
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.show()
         self.loadUI()
         self.setupUI()
         self.makeBindings()
         self.startSetting()
+        self.ui.show()
 
     def loadUI(self):
         ui_file = QFile("main.ui")
@@ -50,9 +53,7 @@ class MainWindow(QMainWindow):
 
         # Menu bindings
         self.ui.action_to_PNG.triggered.connect(self.ui.strandGraphicsScene.exportToPNG)
-
-    def show(self):
-        self.ui.show()
+        self.ui.actionChange_colors.triggered.connect(self.changeColors)
 
     # Helps closing quitting the application when the window is exitted
     # I don't know how it works, it just works
@@ -62,7 +63,7 @@ class MainWindow(QMainWindow):
         return super().eventFilter(source, event)
 
     def startSetting(self):
-        self.ui.strandGraphicsScene.drawSequence(0, 0, "ATGTTACT", "TACAATGA")
+        self.ui.strandEdit.setPlainText("ATGTTACT\nTACAATGA")
 
     def strandGraphicsZoomOut(self):
         self.ui.strandGraphics.scale(1 / 1.2, 1 / 1.2)
@@ -108,11 +109,17 @@ class MainWindow(QMainWindow):
         self.ui.sequenceMappingGraphicsScene.drawLinearMap(genes)
 
     def closeEvent(self, event: QCloseEvent) -> None:
-        print("was here")
         return super().closeEvent(event)
+
+    def changeColors(self):
+        # How does this object get deleted???
+        ChangeColorDialog(
+            self.ui.strandGraphicsScene.updateColor,
+            self.ui.strandGraphicsScene.getColor,
+            self.updateStrandGraphics,
+        )
 
 
 app = QApplication(sys.argv)
 window = MainWindow()
-window.show()
 app.exec()
