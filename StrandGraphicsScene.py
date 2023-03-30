@@ -19,12 +19,15 @@ class StrandGraphicsScene(QGraphicsScene):
             self.updateConfig(json.load(file))
 
     def updateConfig(self, config=dict):
-        self.colorConfig = config["colors"]
+        self.colorConfig = dict()
+        for base, rgb in config["colors"].items():
+            r, g, b = rgb
+            self.colorConfig[base] = QColor(r, g, b)
 
-    def updateColor(self, base: str, color: list[int, int, int]):
+    def updateColor(self, base: str, color: QColor):
         self.colorConfig[base] = color
 
-    def getColor(self, base: str) -> list[int, int, int]:
+    def getColor(self, base: str) -> QColor:
         return self.colorConfig[base]
 
     def drawBase(
@@ -37,16 +40,16 @@ class StrandGraphicsScene(QGraphicsScene):
         letter = letter.upper()
         if letter == "A":
             confcolor = self.colorConfig["adenine"]
-            color = QColor.fromRgb(confcolor[0], confcolor[1], confcolor[2])
+            color = confcolor
         elif letter == "C":
             confcolor = self.colorConfig["cytosine"]
-            color = QColor.fromRgb(confcolor[0], confcolor[1], confcolor[2])
+            color = confcolor
         elif letter == "G":
             confcolor = self.colorConfig["guanine"]
-            color = QColor.fromRgb(confcolor[0], confcolor[1], confcolor[2])
+            color = confcolor
         elif letter == "T":
             confcolor = self.colorConfig["thymine"]
-            color = QColor.fromRgb(confcolor[0], confcolor[1], confcolor[2])
+            color = confcolor
         elif letter == " ":
             return
         else:

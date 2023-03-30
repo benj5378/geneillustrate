@@ -40,10 +40,7 @@ class ChangeColorDialog:
         )
 
     def updateColor(self, base):
-        oldcolortemp = self.getColorMethod(base)
-        oldcolor = QColor.fromRgb(oldcolortemp[0], oldcolortemp[1], oldcolortemp[2])
+        oldcolor = self.getColorMethod(base)
         newcolor = QColorDialog.getColor(oldcolor)
-        self.updateColorMethod(
-            base, [newcolor.red(), newcolor.green(), newcolor.blue()]
-        )
+        self.updateColorMethod(base, newcolor)
         self.updateCallback()  # For instance, update graphics
