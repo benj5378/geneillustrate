@@ -73,6 +73,7 @@ class MainWindow(QMainWindow):
 
     def updateStrandGraphics(self):
         nucleotideWidth = int(self.ui.nucleotideWidthInput.text())
+        nucleotideHeight = int(self.ui.nucleotideHeightInput.text())
         baseWidth = int(self.ui.baseWidthInput.text())
 
         self.ui.strandGraphicsScene.clear()
@@ -85,7 +86,13 @@ class MainWindow(QMainWindow):
             )
         elif len(strands) == 2:
             self.ui.strandGraphicsScene.drawSequence(
-                0, 0, strands[0], strands[1], nucleotideWidth, baseWidth
+                0,
+                0,
+                strands[0],
+                strands[1],
+                nucleotideWidth,
+                nucleotideHeight,
+                baseWidth,
             )
         elif len(strands) == 0:
             return

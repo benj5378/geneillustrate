@@ -31,6 +31,7 @@ class StrandGraphicsScene(QGraphicsScene):
         letter: str,
         flipped=False,
         nucleotideWidth=120,
+        nucleotideHeight=90,
         basewidth=60,
     ) -> None:
         letter = letter.upper()
@@ -58,15 +59,26 @@ class StrandGraphicsScene(QGraphicsScene):
 
         p = QPolygonF(
             [
-                QPointF(x + 0, y + 0 * f),
-                QPointF(x + 0, y + 40 * f),
-                QPointF(x + (nucleotideWidth - basewidth) / 2, y + 40 * f),
-                QPointF(x + (nucleotideWidth - basewidth) / 2, y + 90 * f),
-                QPointF(x + (nucleotideWidth - basewidth) / 2 + basewidth, y + 90 * f),
-                QPointF(x + (nucleotideWidth - basewidth) / 2 + basewidth, y + 40 * f),
-                QPointF(x + nucleotideWidth, y + 40 * f),
-                QPointF(x + nucleotideWidth, y + 0 * f),
-                QPointF(x + 0, y + 0 * f),
+                QPointF(x + 0, y),
+                QPointF(x + 0, y + nucleotideHeight * 0.44 * f),
+                QPointF(
+                    x + (nucleotideWidth - basewidth) / 2,
+                    y + nucleotideHeight * 0.44 * f,
+                ),
+                QPointF(
+                    x + (nucleotideWidth - basewidth) / 2, y + nucleotideHeight * f
+                ),
+                QPointF(
+                    x + (nucleotideWidth - basewidth) / 2 + basewidth,
+                    y + nucleotideHeight * f,
+                ),
+                QPointF(
+                    x + (nucleotideWidth - basewidth) / 2 + basewidth,
+                    y + nucleotideHeight * 0.44 * f,
+                ),
+                QPointF(x + nucleotideWidth, y + nucleotideHeight * 0.44 * f),
+                QPointF(x + nucleotideWidth, y),
+                QPointF(x + 0, y),
             ]
         )
 
@@ -88,11 +100,20 @@ class StrandGraphicsScene(QGraphicsScene):
         sequence: str,
         flipped=False,
         nucleotideWidth=120,
+        nucleotideHeight=90,
         basewidth=60,
     ) -> None:
         currentX = 0
         for letter in sequence:
-            self.drawBase(currentX, y, letter, flipped, nucleotideWidth, basewidth)
+            self.drawBase(
+                currentX,
+                y,
+                letter,
+                flipped,
+                nucleotideWidth,
+                nucleotideHeight,
+                basewidth,
+            )
             currentX = currentX + nucleotideWidth
 
     def drawSequence(
@@ -102,10 +123,21 @@ class StrandGraphicsScene(QGraphicsScene):
         sequence1: str,
         sequence2: str,
         nucleotideWidth=120,
+        nucleotideHeight=90,
         basewidth=60,
     ):
-        self.drawStrand(x, y, sequence1, False, nucleotideWidth, basewidth)
-        self.drawStrand(x, y + 2 * 90, sequence2, True, nucleotideWidth, basewidth)
+        self.drawStrand(
+            x, y, sequence1, False, nucleotideWidth, nucleotideHeight, basewidth
+        )
+        self.drawStrand(
+            x,
+            y + 2 * nucleotideHeight,
+            sequence2,
+            True,
+            nucleotideWidth,
+            nucleotideHeight,
+            basewidth,
+        )
 
     def exportToPNG(self):
         # It works. It just works. No idea how.
