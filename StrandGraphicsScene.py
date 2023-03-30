@@ -28,7 +28,19 @@ class StrandGraphicsScene(QGraphicsScene):
         self.colorConfig[base] = color
 
     def getColor(self, base: str) -> QColor:
-        return self.colorConfig[base]
+        if base == "A":
+            _base = "adenine"
+        elif base == "C":
+            _base = "cytosine"
+        elif base == "G":
+            _base = "guanine"
+        elif base == "T":
+            _base = "thymine"
+        elif base in ["adenine", "cytosine", "guanine", "thymine"]:
+            _base = base
+        else:
+            raise ValueError(f"Base {base} does not exist!")
+        return self.colorConfig[_base]
 
     def drawBase(
         self,
@@ -38,22 +50,9 @@ class StrandGraphicsScene(QGraphicsScene):
         flipped=False,
     ) -> None:
         letter = letter.upper()
-        if letter == "A":
-            confcolor = self.colorConfig["adenine"]
-            color = confcolor
-        elif letter == "C":
-            confcolor = self.colorConfig["cytosine"]
-            color = confcolor
-        elif letter == "G":
-            confcolor = self.colorConfig["guanine"]
-            color = confcolor
-        elif letter == "T":
-            confcolor = self.colorConfig["thymine"]
-            color = confcolor
-        elif letter == " ":
+        if letter == " ":
             return
-        else:
-            raise ValueError("Base does not exist!")
+        color = self.getColor(letter)
 
         if flipped:
             f = -1
