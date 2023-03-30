@@ -12,6 +12,7 @@ class StrandGraphicsScene(QGraphicsScene):
     nucleotideWidth = 120
     nucleotideHeight = 90
     baseWidth = 60
+    breakEveryNbase = 0
 
     def __init__(self):
         super().__init__()
@@ -101,7 +102,7 @@ class StrandGraphicsScene(QGraphicsScene):
         x: int,
         y: int,
         sequence: str,
-        flipped=False,
+        flipped=False
     ) -> None:
         currentX = 0
         for letter in sequence:
@@ -109,8 +110,15 @@ class StrandGraphicsScene(QGraphicsScene):
             currentX = currentX + self.nucleotideWidth
 
     def drawSequence(self, x: int, y: int, sequence1: str, sequence2: str):
-        self.drawStrand(x, y, sequence1, False)
-        self.drawStrand(x, y + 2 * self.nucleotideHeight, sequence2, True)
+        if self.breakEveryNbase == 0:
+            self.drawStrand(x, y, sequence1, False)
+            self.drawStrand(x, y + 2 * self.nucleotideHeight, sequence2, True)
+            return
+
+        verticalSpacing = 0.3 * self.nucleotideHeight
+        for i, j in enumerate(range(0, max(len(sequence1), len(sequence2)), self.breakEveryNbase)):
+            self.drawStrand(x, y + (self.nucleotideHeight * 2 + verticalSpacing) * i, sequence1[j:j + self.breakEveryNbase], False)
+            self.drawStrand(x, y + (self.nucleotideHeight * 2 + verticalSpacing) * i + 2 * self.nucleotideHeight, sequence2[j:j + self.breakEveryNbase], True)
 
     def exportToPNG(self):
         # It works. It just works. No idea how.

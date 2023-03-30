@@ -44,6 +44,7 @@ class MainWindow(QMainWindow):
         # Strand tab bindings
         self.ui.baseWidthInput.textChanged.connect(self.updateStrandGraphics)
         self.ui.nucleotideWidthInput.textChanged.connect(self.updateStrandGraphics)
+        self.ui.breakEveryNBaseInput.textChanged.connect(self.updateStrandGraphics)
         self.ui.strandEdit.textChanged.connect(self.updateStrandGraphics)
         self.ui.zoomInButton.pressed.connect(self.strandGraphicsZoomIn)
         self.ui.zoomOutButton.pressed.connect(self.strandGraphicsZoomOut)
@@ -79,6 +80,7 @@ class MainWindow(QMainWindow):
             self.ui.nucleotideHeightInput.text()
         )
         self.ui.strandGraphicsScene.baseWidth = int(self.ui.baseWidthInput.text())
+        self.ui.strandGraphicsScene.breakEveryNbase = int(self.ui.breakEveryNBaseInput.text())
 
         self.ui.strandGraphicsScene.clear()
         text = self.ui.strandEdit.toPlainText()
