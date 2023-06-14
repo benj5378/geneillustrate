@@ -67,7 +67,7 @@ class MainWindow(QMainWindow):
         self.ui.strandEdit.setPlainText("ATGTTACT\nTACAATGA")
 
     def strandGraphicsZoomOut(self):
-        self.ui.strandGraphics.scale(1 / 1.2, 1 / 1.2)
+        self.uistrandGraphics.scale(1 / 1.2, 1 / 1.2)
 
     def strandGraphicsZoomIn(self):
         self.ui.strandGraphics.scale(1.2, 1.2)
